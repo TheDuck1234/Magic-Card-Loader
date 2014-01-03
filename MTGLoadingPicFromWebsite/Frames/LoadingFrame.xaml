@@ -1,0 +1,10 @@
+﻿<Window Name="Window" x:Class="MTGLoadingPicFromWebsite.Frames.LoadingFrame"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="LoadingFrame" Height="102.631" Width="451.128">
+    <Grid>
+        <ProgressBar Name="ProgressBar" HorizontalAlignment="Left" Height="42" Margin="10,10,0,0" VerticalAlignment="Top" Width="413"/>
+        <Label Name="ProgressLabel" Content="ProgressLabel" HorizontalAlignment="Left" Margin="155,19,0,0" VerticalAlignment="Top" Height="33" FontWeight="Bold" FontSize="14"/>
+
+    </Grid>
+</Window>

@@ -1,0 +1,12 @@
+﻿ <Window x:Class="MTGLoadingPicFromWebsite.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="DeckBuilder" Height="286" Width="419" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Label Content="Copyright : Anders Petersen" HorizontalAlignment="Left" Margin="10,224,0,0" VerticalAlignment="Top" FontSize="8" FontWeight="Bold"/>
+        <Button Name="CardsButton" Content="Card Database" HorizontalAlignment="Left" Height="40" Margin="49,121,0,0" VerticalAlignment="Top" Width="150" Click="CardsButton_Click"/>
+        <Button Name="DeckButton" Content="Deck Manager" HorizontalAlignment="Left" Height="40" Margin="222,121,0,0" VerticalAlignment="Top" Width="150" Click="DeckButton_Click"/>
+        <Label Content="Magic the gathering DeckBuilder" HorizontalAlignment="Left" Margin="49,29,0,0" VerticalAlignment="Top" Height="41" Width="323" FontWeight="Bold" FontSize="20"/>
+
+    </Grid>
+</Window>

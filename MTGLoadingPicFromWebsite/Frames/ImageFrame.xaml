@@ -1,0 +1,9 @@
+﻿<Window Name="Window" x:Class="MTGLoadingPicFromWebsite.Frames.ImageFrame"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ImageFrame" Height="378.797" Width="223.955" ResizeMode="NoResize" >
+    <Grid>
+        <Image Name="Image" HorizontalAlignment="Left" Height="265" Margin="10,20,0,0" VerticalAlignment="Top" Width="202"/>
+        <Button Name="DownloadeButton" Content="Downloade Image" HorizontalAlignment="Left" Margin="10,290,0,0" VerticalAlignment="Top" Width="187" Height="35" Click="DownloadeButton_Click"/>
+    </Grid>
+</Window>
