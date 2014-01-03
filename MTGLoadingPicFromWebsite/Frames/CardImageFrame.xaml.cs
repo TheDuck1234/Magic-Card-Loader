@@ -70,12 +70,11 @@ namespace MTGLoadingPicFromWebsite.Frames
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             Close();
-            Owner.Show();
         }
 
         private void Window_Closed(object sender, System.EventArgs e)
         {
-            Owner.Close();
+            Owner.Show();
         }
     }
 }

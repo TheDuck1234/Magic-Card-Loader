@@ -11,5 +11,6 @@
         <Label Content="Type:" HorizontalAlignment="Left" Margin="5,47,0,0" VerticalAlignment="Top"/>
         <Label Content="Set:" HorizontalAlignment="Left" Margin="191,47,0,0" VerticalAlignment="Top"/>
         <Button Content="Search" HorizontalAlignment="Left" Margin="5,13,0,0" VerticalAlignment="Top" Width="75"/>
+        <ProgressBar Name="ProgressBar" HorizontalAlignment="Left" Height="19" Margin="82,236,0,0" VerticalAlignment="Top" Width="195"/>
     </Grid>
 </Window>
