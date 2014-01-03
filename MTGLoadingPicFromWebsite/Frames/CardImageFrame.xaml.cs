@@ -13,12 +13,13 @@ namespace MTGLoadingPicFromWebsite.Frames
     public partial class CardImageWindow
     {
         private readonly XmlCardManager _cardManager;
+
         public CardImageWindow( Window window)
         {
             InitializeComponent();
             Owner = window;
             _cardManager = new XmlCardManager(XmlCardLoader.CardsNameList());
-           // ListBox.ItemsSource = _cardManager.ToNames(_cardManager.Cards);
+            ListBox.ItemsSource = _cardManager.ToNames(_cardManager.Cards);
             SetupCombobox();
             STextBox.Text = "Card Name";
             STextBox.TouchEnter += new EventHandler<TouchEventArgs>(Enter);
@@ -57,15 +58,11 @@ namespace MTGLoadingPicFromWebsite.Frames
                 "Enchantment",
                 "Sorcery"
             };
+            //SetComboBox.ItemsSource = XmlCardLoader.
             TypeComboBox.ItemsSource = list;
             TypeComboBox.SelectedItem = TypeComboBox.Items[0];
         }
 
-        private void STextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
-        {
-            //ListBox.ItemsSource = _cardManager.ToNames(
-                //XmlCardLoader.CardSearch(STextBox.Text, TypeComboBox.SelectedItem.ToString()));
-        }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -76,5 +73,18 @@ namespace MTGLoadingPicFromWebsite.Frames
         {
             Owner.Show();
         }
+
+        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private List<XmlCard> SetCards(List<XmlCard> cards)
+        {
+            var newCards = new List<XmlCard>();
+
+            return newCards;
+        }
+
     }
 }

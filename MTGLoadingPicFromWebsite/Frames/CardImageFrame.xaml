@@ -5,12 +5,12 @@
     <Grid>
         <ListBox Name="ListBox" HorizontalAlignment="Left" Height="333" Margin="10,87,0,0" VerticalAlignment="Top" Width="344" MouseDoubleClick="ListBox_MouseDoubleClick"/>
         <Button Content="Back" HorizontalAlignment="Left" Margin="10,425,0,0" VerticalAlignment="Top" Width="344" Height="30" FontWeight="Bold" FontSize="14" Click="Button_Click"/>
-        <TextBox Name="STextBox" HorizontalAlignment="Left" Height="23" Margin="95,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="259" TextChanged="STextBox_TextChanged"/>
+        <TextBox Name="STextBox" HorizontalAlignment="Left" Height="23" Margin="95,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="259"/>
         <ComboBox Name="TypeComboBox" HorizontalAlignment="Left" Margin="48,51,0,0" VerticalAlignment="Top" Width="120"/>
-        <ComboBox Name="SetComboBox" HorizontalAlignment="Left" Margin="225,51,0,0" VerticalAlignment="Top" Width="120"/>
+        <ComboBox Name="SetComboBox" HorizontalAlignment="Left" Margin="234,51,0,0" VerticalAlignment="Top" Width="120"/>
         <Label Content="Type:" HorizontalAlignment="Left" Margin="5,47,0,0" VerticalAlignment="Top"/>
         <Label Content="Set:" HorizontalAlignment="Left" Margin="191,47,0,0" VerticalAlignment="Top"/>
-        <Button Content="Search" HorizontalAlignment="Left" Margin="5,13,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button Name="SearchButton" Content="Search" HorizontalAlignment="Left" Margin="5,13,0,0" VerticalAlignment="Top" Width="75" Click="SearchButton_Click"/>
         <ProgressBar Name="ProgressBar" HorizontalAlignment="Left" Height="19" Margin="82,236,0,0" VerticalAlignment="Top" Width="195"/>
     </Grid>
 </Window>
