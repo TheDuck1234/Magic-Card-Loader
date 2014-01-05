@@ -88,13 +88,7 @@ namespace MTGLoadingPicFromWebsite.Core.Xml
             return xmlCard;
         }
 
-        private static List<string> GetAllSetList()
-        {
-            var list = new List<string>();
-
-            return list;
-        } 
-        private static bool CardCheck(string text,string target, XmlNode xmlElement)
+        private static bool CardCheck(string text, string target, XmlNode xmlElement)
         {
             var check = false;
             switch (target)
@@ -106,40 +100,47 @@ namespace MTGLoadingPicFromWebsite.Core.Xml
                     }
                     break;
                 case "Creature":
-                {
-                    var element = xmlElement["type"];
-                    if (element == null)
                     {
-                        return false;
-                    }
-                    var targetElement = CutTrash(element.InnerText);
-                    if (!targetElement.StartsWith("Creature")) return false;
-                    if (NameCheck(text, xmlElement))
-                    {
-                        check = true;
-                    }
-                }
-                    break;
-                case "Land":
-                {
-                    var element = xmlElement["type"];
-                    if (element == null)
-                    {
-                        return false;
-                    }
-                    var targetElement = CutTrash(element.InnerText);
-                    if (targetElement.StartsWith("Basic Land") || targetElement.StartsWith("Land"))
-                    {
+                        var element = xmlElement["type"];
+                        if (element == null)
+                        {
+                            return false;
+                        }
+                        var targetElement = CutTrash(element.InnerText);
+                        if (!targetElement.StartsWith("Creature")) return false;
                         if (NameCheck(text, xmlElement))
                         {
                             check = true;
                         }
                     }
-                }
+                    break;
+                case "Land":
+                    {
+                        var element = xmlElement["type"];
+                        if (element == null)
+                        {
+                            return false;
+                        }
+                        var targetElement = CutTrash(element.InnerText);
+                        if (targetElement.StartsWith("Basic Land") || targetElement.StartsWith("Land"))
+                        {
+                            if (NameCheck(text, xmlElement))
+                            {
+                                check = true;
+                            }
+                        }
+                    }
                     break;
             }
             return check;
         }
+
+        private static List<string> GetAllSetList()
+        {
+            var list = new List<string>();
+
+            return list;
+        } 
 
         private static bool NameCheck(string text, XmlNode targetElement)
         {

@@ -24,6 +24,7 @@ namespace MTGLoadingPicFromWebsite.Core.Xml
         {
             return cards.Select(card => card.Name).ToList();
         }
+
         public static List<T>[] Partition<T>(List<T> list, int totalPartitions)
         {
             if (list == null)

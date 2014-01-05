@@ -88,6 +88,7 @@
     </Compile>
     <Compile Include="Core\Image\CacheManager.cs" />
     <Compile Include="Core\Image\ImageLoader.cs" />
+    <Compile Include="Core\Worker\SearchWorker.cs" />
     <Compile Include="Core\Xml\XmlCardManager.cs" />
     <Compile Include="Frames\CardImageFrame.xaml.cs">
       <DependentUpon>CardImageFrame.xaml</DependentUpon>

@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using MTGLoadingPicFromWebsite.Core.Xml;
 
 namespace MTGLoadingPicFromWebsite.Frames
@@ -13,9 +17,12 @@ namespace MTGLoadingPicFromWebsite.Frames
     public partial class CardImageWindow
     {
         private readonly XmlCardManager _cardManager;
+        private DateTime _starttime;
+        private int _count;
 
-        public CardImageWindow( Window window)
+        public CardImageWindow( Window window, int count)
         {
+            _count = count;
             InitializeComponent();
             Owner = window;
             _cardManager = new XmlCardManager(XmlCardLoader.CardsNameList());
@@ -79,6 +86,43 @@ namespace MTGLoadingPicFromWebsite.Frames
             
         }
 
+        private void Search()
+        {
+            var lists = XmlCardManager.Partition(_cardManager.Cards, 5);
+
+            //Setup for Timer
+			_starttime = DateTime.Now;
+            var tasks = lists.Select(list => Task.Factory.StartNew(() =>
+            {
+                _worker = WorkerLoader.Load(info.WorkerType);
+                _worker.Progressed += (o, args) =>
+                {
+                    lock (this)
+                    {
+                        _count++;
+                    }
+                    Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart) delegate
+                    {
+                        // ReSharper disable once RedundantCast
+                        var procent = ((100*_count)/_cardManager.Cards.Count);
+                        ProgressBar.Value = procent;
+                        //ProgressLabel.Content = "Progress: " + procent + "%";
+                        //CountLabel.Content = "Total items cleanse: " + count;
+                        if (_count > 0)
+                        {
+                            EstimateTimeLabel.Content = "Estimate Time: " + EstimateTime(excelResults.Count).ToString();
+                        }
+                    });
+                };
+            }
+        }
+        private TimeSpan EstimateTime(int max)
+        {
+            var timespent = DateTime.Now - _starttime;
+            var secondsremaining = (int)(timespent.TotalSeconds / _count * (max - _count));
+            var timespan = TimeSpan.FromSeconds(secondsremaining);
+            return timespan;
+        }
         private List<XmlCard> SetCards(List<XmlCard> cards)
         {
             var newCards = new List<XmlCard>();
