@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 using MTGLoadingPicFromWebsite.Core.Xml;
 
 namespace MTGLoadingPicFromWebsite.Core.Worker
 {
     public class SearchWorker
     {
-        event EventHandler<EventArgs> Progressed;
+        public event EventHandler<EventArgs> Progressed;
 
         protected virtual void OnProgressed()
         {
@@ -23,7 +20,7 @@ namespace MTGLoadingPicFromWebsite.Core.Worker
         {
             var list = new List<XmlCard>();
 
-            if (!type.Equals("All") && !set.Equals("All"))
+            if (!set.Equals("All Sets"))
             {
                 foreach (var xmlCard in cards.Where(xmlCard => xmlCard.Set == set && CardCheck(xmlCard, type, text)))
                 {
@@ -31,9 +28,22 @@ namespace MTGLoadingPicFromWebsite.Core.Worker
                     OnProgressed();
                 }
             }
+            else if (set.Equals("All Sets"))
+            {
+                foreach (var xmlCard in cards)
+                {
+                    if (CardCheck(xmlCard, type, text))
+                    {
+                        list.Add(xmlCard);
+                        OnProgressed();
+                    }
+                }
 
+                return list;
+            }
             return list;
         }
+
         private static bool CardCheck(XmlCard card, string type, string text)
         {
             var check = false;
@@ -72,6 +82,7 @@ namespace MTGLoadingPicFromWebsite.Core.Worker
             }
             return check;
         }
+
         private static bool NameCheck(string text,XmlCard xmlCard)
         {
             var check = false;

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using MTGLoadingPicFromWebsite.Core.Worker;
 using MTGLoadingPicFromWebsite.Core.Xml;
 
 namespace MTGLoadingPicFromWebsite.Frames
@@ -16,37 +17,24 @@ namespace MTGLoadingPicFromWebsite.Frames
     /// </summary>
     public partial class CardImageWindow
     {
-        private readonly XmlCardManager _cardManager;
+        private XmlCardManager _cardManager;
         private DateTime _starttime;
         private int _count;
 
-        public CardImageWindow( Window window, int count)
+        public CardImageWindow( Window window)
         {
-            _count = count;
             InitializeComponent();
             Owner = window;
+            Setup();
+            STextBox.Text = "Card Name";
+        }
+
+        private void Setup()
+        {
+
             _cardManager = new XmlCardManager(XmlCardLoader.CardsNameList());
             ListBox.ItemsSource = _cardManager.ToNames(_cardManager.Cards);
             SetupCombobox();
-            STextBox.Text = "Card Name";
-            STextBox.TouchEnter += new EventHandler<TouchEventArgs>(Enter);
-            STextBox.TouchEnter += new EventHandler<TouchEventArgs>(Leave);
-        }
-
-        private void Leave(object sender, EventArgs e)
-        {
-            if (STextBox.Text != "Card Name" && STextBox.Text == string.Empty)
-            {
-                STextBox.Text = "Card Name";
-            }
-        }
-
-        private void Enter(object sender, EventArgs e)
-        {
-            if (STextBox.Text != string.Empty && STextBox.Text == "Card Name" )
-            {
-                STextBox.Text = string.Empty;
-            }
         }
 
         private void ListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -65,9 +53,11 @@ namespace MTGLoadingPicFromWebsite.Frames
                 "Enchantment",
                 "Sorcery"
             };
-            //SetComboBox.ItemsSource = XmlCardLoader.
             TypeComboBox.ItemsSource = list;
-            TypeComboBox.SelectedItem = TypeComboBox.Items[0];
+            TypeComboBox.SelectedIndex = 0;
+
+            SetComboBox.ItemsSource = XmlCardLoader.GetAllSetList();
+            SetComboBox.SelectedIndex = 0;
         }
 
 
@@ -83,19 +73,14 @@ namespace MTGLoadingPicFromWebsite.Frames
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-            
-        }
-
-        private void Search()
-        {
-            var lists = XmlCardManager.Partition(_cardManager.Cards, 5);
+             var lists = XmlCardManager.Partition(_cardManager.Cards, 5);
 
             //Setup for Timer
 			_starttime = DateTime.Now;
             var tasks = lists.Select(list => Task.Factory.StartNew(() =>
             {
-                _worker = WorkerLoader.Load(info.WorkerType);
-                _worker.Progressed += (o, args) =>
+                var worker = new SearchWorker();
+                worker.Progressed += (o, args) =>
                 {
                     lock (this)
                     {
@@ -110,11 +95,37 @@ namespace MTGLoadingPicFromWebsite.Frames
                         //CountLabel.Content = "Total items cleanse: " + count;
                         if (_count > 0)
                         {
-                            EstimateTimeLabel.Content = "Estimate Time: " + EstimateTime(excelResults.Count).ToString();
+                            //EstimateTimeLabel.Content = "Estimate Time: " + EstimateTime(excelResults.Count).ToString();
                         }
                     });
                 };
-            }
+
+                var result = worker.SearchCards(list.ToList(), TypeComboBox.SelectedItem.ToString(),
+                    SetComboBox.SelectedItem.ToString(), STextBox.Text);
+                return result;
+
+            })).ToList();
+
+            Task.Factory.StartNew(() =>
+            {
+                var results = new List<XmlCard>();
+                // Wait till all tasks completed
+
+                foreach (var result in tasks.Select(task => task.Result))
+                {
+                    results.AddRange(result.ToList());
+                }
+                ListBox.Items.Clear();
+                ListBox.ItemsSource = results;
+
+                //Reset();
+
+            });
+        }
+
+        private void Search()
+        {
+           
         }
         private TimeSpan EstimateTime(int max)
         {

@@ -135,11 +135,23 @@ namespace MTGLoadingPicFromWebsite.Core.Xml
             return check;
         }
 
-        private static List<string> GetAllSetList()
+        public static List<string> GetAllSetList()
         {
-            var list = new List<string>();
+            var setlist = new List<string>();
+            setlist.Add("All Sets");
+            var xDoc = new XmlDocument();
+            xDoc.Load(Path);
 
-            return list;
+            var cards = xDoc.GetElementsByTagName("set");
+            for (int i = 0; i < cards.Count; i++)
+            {
+                var xmlElement = cards[i]["name"];
+                if (xmlElement != null)
+                {
+                    setlist.Add(xmlElement.InnerText);
+                }
+            }
+            return setlist;
         } 
 
         private static bool NameCheck(string text, XmlNode targetElement)
