@@ -20,22 +20,16 @@ namespace MTGLoadingPicFromWebsite.Frames
         private XmlCardManager _cardManager;
         private DateTime _starttime;
         private int _count;
+        private bool _firstSearch = false;
 
         public CardImageWindow( Window window)
         {
             InitializeComponent();
             Owner = window;
-            Setup();
+            //Setup();
             STextBox.Text = "Card Name";
         }
 
-        private void Setup()
-        {
-
-            _cardManager = new XmlCardManager(XmlCardLoader.CardsNameList());
-            ListBox.ItemsSource = _cardManager.ToNames(_cardManager.Cards);
-            SetupCombobox();
-        }
 
         private void ListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
@@ -71,12 +65,22 @@ namespace MTGLoadingPicFromWebsite.Frames
             Owner.Show();
         }
 
+
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-             var lists = XmlCardManager.Partition(_cardManager.Cards, 5);
+            if (!_firstSearch)
+            {
+                FSearch();
+                _firstSearch = true;
+            }
+        }
+
+        private void Search()
+        {
+            var lists = XmlCardManager.Partition(_cardManager.Cards, 5);
 
             //Setup for Timer
-			_starttime = DateTime.Now;
+            _starttime = DateTime.Now;
             var tasks = lists.Select(list => Task.Factory.StartNew(() =>
             {
                 var worker = new SearchWorker();
@@ -86,11 +90,11 @@ namespace MTGLoadingPicFromWebsite.Frames
                     {
                         _count++;
                     }
-                    Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart) delegate
+                    Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate
                     {
                         // ReSharper disable once RedundantCast
-                        var procent = ((100*_count)/_cardManager.Cards.Count);
-                        ProgressBar.Value = procent;
+                        //var procent = ((100 * _count) / _cardManager.Cards.Count);
+                        ProgressBar.Value = 10;
                         //ProgressLabel.Content = "Progress: " + procent + "%";
                         //CountLabel.Content = "Total items cleanse: " + count;
                         if (_count > 0)
@@ -122,11 +126,18 @@ namespace MTGLoadingPicFromWebsite.Frames
 
             });
         }
-
-        private void Search()
+        private void FSearch()
         {
-           
+            var xmlloader = new XmlCardLoader();
+            ProgressBar.Visibility = Visibility.Visible;
+            
+            _cardManager = new XmlCardManager(xmlloader.CardsNameList());
+            ListBox.ItemsSource = _cardManager.ToNames(_cardManager.Cards);
+            SetupCombobox();
+
+            ProgressBar.Visibility = Visibility.Hidden;
         }
+
         private TimeSpan EstimateTime(int max)
         {
             var timespent = DateTime.Now - _starttime;

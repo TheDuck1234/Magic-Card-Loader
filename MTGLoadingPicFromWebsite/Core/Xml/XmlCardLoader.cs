@@ -4,11 +4,18 @@ using System.Xml;
 
 namespace MTGLoadingPicFromWebsite.Core.Xml
 {
-    public static class XmlCardLoader
+    public class XmlCardLoader
     {
         private static readonly string Path = System.IO.Path.Combine(AppSettings.GetAppSettingXmlPath(), AppSettings.GetAppSettingFile());
-      
-        public static List<XmlCard> CardsNameList()
+        public event EventHandler<EventArgs> Progressed;
+
+        public virtual void OnProgressed()
+        {
+            var handler = Progressed;
+            if (handler != null)
+                handler(this, EventArgs.Empty);
+        }
+        public List<XmlCard> CardsNameList()
         {
             var cardsList = new List<XmlCard>();
             var xDoc = new XmlDocument();
@@ -20,6 +27,7 @@ namespace MTGLoadingPicFromWebsite.Core.Xml
                 var xmlElement = cards[i]["name"];
                 if (xmlElement != null)
                 {
+                    OnProgressed();
                     cardsList.Add(MakeXmlCard(cards[i]));
                 }
             }
