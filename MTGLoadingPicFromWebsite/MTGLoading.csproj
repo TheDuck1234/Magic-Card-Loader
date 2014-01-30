@@ -41,6 +41,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -61,6 +62,10 @@
     <Page Include="Frames\CardImageFrame.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Frames\DownLoadingFrame.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Frames\DeckFrame.xaml">
       <SubType>Designer</SubType>
@@ -88,6 +93,7 @@
     </Compile>
     <Compile Include="Core\Image\CacheManager.cs" />
     <Compile Include="Core\Image\ImageLoader.cs" />
+    <Compile Include="Core\Worker\LoadingManager.cs" />
     <Compile Include="Core\Worker\SearchWorker.cs" />
     <Compile Include="Core\Xml\XmlCardManager.cs" />
     <Compile Include="Frames\CardImageFrame.xaml.cs">
@@ -97,6 +103,9 @@
     <Compile Include="Core\Website\WizardsImageHandler.cs" />
     <Compile Include="Core\Xml\XmlCard.cs" />
     <Compile Include="Core\Xml\XmlCardLoader.cs" />
+    <Compile Include="Frames\DownLoadingFrame.xaml.cs">
+      <DependentUpon>DownLoadingFrame.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Frames\DeckFrame.xaml.cs">
       <DependentUpon>DeckFrame.xaml</DependentUpon>
     </Compile>

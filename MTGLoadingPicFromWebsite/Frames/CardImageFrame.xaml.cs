@@ -17,6 +17,7 @@ namespace MTGLoadingPicFromWebsite.Frames
     /// </summary>
     public partial class CardImageWindow
     {
+        private bool f = true;
         private XmlCardManager _cardManager;
         private DateTime _starttime;
         private int _count;
@@ -26,8 +27,9 @@ namespace MTGLoadingPicFromWebsite.Frames
         {
             InitializeComponent();
             Owner = window;
-            //Setup();
+            Search();
             STextBox.Text = "Card Name";
+            f = false;
         }
 
 
@@ -68,69 +70,30 @@ namespace MTGLoadingPicFromWebsite.Frames
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!_firstSearch)
-            {
-                FSearch();
-                _firstSearch = true;
-            }
+            FirstSearch();
+            //test button now 
         }
 
         private void Search()
         {
-            var lists = XmlCardManager.Partition(_cardManager.Cards, 5);
-
-            //Setup for Timer
-            _starttime = DateTime.Now;
-            var tasks = lists.Select(list => Task.Factory.StartNew(() =>
-            {
-                var worker = new SearchWorker();
-                worker.Progressed += (o, args) =>
-                {
-                    lock (this)
-                    {
-                        _count++;
-                    }
-                    Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate
-                    {
-                        // ReSharper disable once RedundantCast
-                        //var procent = ((100 * _count) / _cardManager.Cards.Count);
-                        ProgressBar.Value = 10;
-                        //ProgressLabel.Content = "Progress: " + procent + "%";
-                        //CountLabel.Content = "Total items cleanse: " + count;
-                        if (_count > 0)
-                        {
-                            //EstimateTimeLabel.Content = "Estimate Time: " + EstimateTime(excelResults.Count).ToString();
-                        }
-                    });
-                };
-
-                var result = worker.SearchCards(list.ToList(), TypeComboBox.SelectedItem.ToString(),
-                    SetComboBox.SelectedItem.ToString(), STextBox.Text);
-                return result;
-
-            })).ToList();
-
-            Task.Factory.StartNew(() =>
-            {
-                var results = new List<XmlCard>();
-                // Wait till all tasks completed
-
-                foreach (var result in tasks.Select(task => task.Result))
-                {
-                    results.AddRange(result.ToList());
-                }
-                ListBox.Items.Clear();
-                ListBox.ItemsSource = results;
-
-                //Reset();
-
-            });
+            //var lists = XmlCardManager.Partition(_cardManager.Cards, 5);
+            var result = LoadingFrame.Load(this.Owner, "xmlcard");
+            _cardManager = new XmlCardManager(result.XmlCards);
+            ListBox.ItemsSource = _cardManager.ToNames(_cardManager.Cards);
+            SetupCombobox();
         }
-        private void FSearch()
+        private void FirstSearch()
         {
             var xmlloader = new XmlCardLoader();
             ProgressBar.Visibility = Visibility.Visible;
-            
+            xmlloader.Progressed += (o, args) =>
+            {
+                lock (this)
+                {
+                    _count++;
+                }
+                Console.WriteLine(_count);
+            };
             _cardManager = new XmlCardManager(xmlloader.CardsNameList());
             ListBox.ItemsSource = _cardManager.ToNames(_cardManager.Cards);
             SetupCombobox();
@@ -138,13 +101,6 @@ namespace MTGLoadingPicFromWebsite.Frames
             ProgressBar.Visibility = Visibility.Hidden;
         }
 
-        private TimeSpan EstimateTime(int max)
-        {
-            var timespent = DateTime.Now - _starttime;
-            var secondsremaining = (int)(timespent.TotalSeconds / _count * (max - _count));
-            var timespan = TimeSpan.FromSeconds(secondsremaining);
-            return timespan;
-        }
         private List<XmlCard> SetCards(List<XmlCard> cards)
         {
             var newCards = new List<XmlCard>();

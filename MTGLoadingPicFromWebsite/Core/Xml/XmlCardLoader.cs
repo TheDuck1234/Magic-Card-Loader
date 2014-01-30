@@ -1,13 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
+using MTGLoadingPicFromWebsite.Core.Worker;
 
 namespace MTGLoadingPicFromWebsite.Core.Xml
 {
-    public class XmlCardLoader
+    public class XmlCardLoader : ILoading
     {
         private static readonly string Path = System.IO.Path.Combine(AppSettings.GetAppSettingXmlPath(), AppSettings.GetAppSettingFile());
         public event EventHandler<EventArgs> Progressed;
+
+        public LoadingResult GoLoadingResult()
+        {
+            var result = new LoadingResult {XmlCards = CardsNameList()};
+            return result;
+        }
 
         public virtual void OnProgressed()
         {
@@ -31,7 +38,7 @@ namespace MTGLoadingPicFromWebsite.Core.Xml
                     cardsList.Add(MakeXmlCard(cards[i]));
                 }
             }
-            return cardsList;
+            return cardsList; //23951
         }
 
         public static XmlCard GetCardByName(string name)
