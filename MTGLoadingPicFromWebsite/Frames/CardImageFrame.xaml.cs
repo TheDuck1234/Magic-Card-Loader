@@ -17,19 +17,14 @@ namespace MTGLoadingPicFromWebsite.Frames
     /// </summary>
     public partial class CardImageWindow
     {
-        private bool f = true;
-        private XmlCardManager _cardManager;
-        private DateTime _starttime;
         private int _count;
-        private bool _firstSearch = false;
+        private XmlCardManager _cardManager;
 
         public CardImageWindow( Window window)
         {
             InitializeComponent();
             Owner = window;
-            Search();
-            STextBox.Text = "Card Name";
-            f = false;
+            LoadingXmL();
         }
 
 
@@ -70,34 +65,55 @@ namespace MTGLoadingPicFromWebsite.Frames
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-            FirstSearch();
+            Search2();
             //test button now 
         }
 
-        private void Search()
+        private void LoadingXmL()
         {
-            //var lists = XmlCardManager.Partition(_cardManager.Cards, 5);
             var result = LoadingFrame.Load(this.Owner, "xmlcard");
             _cardManager = new XmlCardManager(result.XmlCards);
             ListBox.ItemsSource = _cardManager.ToNames(_cardManager.Cards);
             SetupCombobox();
         }
-        private void FirstSearch()
+        private void Search()
         {
-            var xmlloader = new XmlCardLoader();
             ProgressBar.Visibility = Visibility.Visible;
-            xmlloader.Progressed += (o, args) =>
-            {
-                lock (this)
-                {
-                    _count++;
-                }
-                Console.WriteLine(_count);
-            };
-            _cardManager = new XmlCardManager(xmlloader.CardsNameList());
-            ListBox.ItemsSource = _cardManager.ToNames(_cardManager.Cards);
-            SetupCombobox();
+            var lists = XmlCardManager.Partition(_cardManager.Cards, 5);
 
+            var tasks = lists.Select(list => Task.Factory.StartNew(() =>
+            {
+                var worker = new SearchWorker();
+                var result = worker.SearchCards(list.ToList(), TypeComboBox.SelectedItem.ToString(),
+                    SetComboBox.SelectedItem.ToString(), STextBox.Text);
+                return result;
+            })).ToList();
+            Task.Factory.StartNew(() =>
+            {   
+                var results = new List<XmlCard>();
+                // Wait till all tasks completed
+
+                foreach (var result in tasks.Select(task => task.Result))
+                {
+                    results.AddRange(result.ToList());
+                }
+
+                ListBox.ItemsSource = results;
+
+            });
+
+
+            ProgressBar.Visibility = Visibility.Hidden;
+        }
+
+        private void Search2()
+        {
+            ProgressBar.Visibility = Visibility.Visible;
+
+            var worker = new SearchWorker();
+            var result = worker.SearchCards(_cardManager.Cards, TypeComboBox.SelectedItem.ToString(),
+                SetComboBox.SelectedItem.ToString(), STextBox.Text);
+            ListBox.ItemsSource = result.Select(xmlCard => xmlCard.Name).ToList();
             ProgressBar.Visibility = Visibility.Hidden;
         }
 

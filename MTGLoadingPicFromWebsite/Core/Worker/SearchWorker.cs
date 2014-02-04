@@ -88,7 +88,7 @@ namespace MTGLoadingPicFromWebsite.Core.Worker
             var check = false;
             if (xmlCard == null) return false;
             var targetText = xmlCard.Name;
-            if (targetText.StartsWith(text.ToLower()))
+            if (targetText.ToLower().StartsWith(text.ToLower()))
             {
                 check = true;
             }
